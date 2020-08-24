@@ -43,9 +43,13 @@ export function send(method, uri, opts) {
 			(req.status >= 400 ? rej : res)(req);
 		};
 
-		if ((str = opts.body) && typeof str == 'object') {
-			headers['content-type'] = 'application/json';
-			str = JSON.stringify(str);
+		if ((str = opts.body)) {
+			if (str instanceof FormData) {
+				delete headers['content-type'];
+			} else if (typeof str == 'object') {
+				headers['content-type'] = 'application/json';
+				str = JSON.stringify(str);
+			}
 		}
 
 		req.withCredentials = !!opts.withCredentials;
